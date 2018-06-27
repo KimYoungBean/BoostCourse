@@ -142,7 +142,66 @@
         * Swift
             * Codable
             * JsonDecoder
-- [ ] __1. 테이블뷰__
+- [x] __1. 테이블뷰__
+    * _테이블 뷰 스타일_
+        ```
+        * 일반 테이블뷰(Plain TableView)
+            * 더 이상 나뉘지 않는 연속적인 행의 리스트 형태
+            * 하나 이상의 섹션을 가질 수 있으며, 각 섹션은 여러 개의 행을 지닐 수 있음
+            * 각 섹션은 헤더 혹은 푸터를 옵션으로 가질 수 있음
+            * 색인을 이용한 빠른 탐색을 하거나 옵션을 선택할 때 용이
+        * 그룹 테이블뷰(Grouped TableView)
+            * 섹션을 기준으로 그룹화되어있는 리스트 형태
+            * 하나 이상의 섹션을 가질 수 있으며, 각 섹션은 여러 개의 행을 지닐 수 있음
+            * 각 섹션은 헤더 혹은 푸터를 옵션으로 가질 수 있음
+            * 정보를 특정 기준에 따라 개념적으로 구분할 때 적합
+            * 사용자가 정보를 빠르게 이해하는데 도움
+    * _테이블 뷰 생성_
+        ```
+        * 동적 프로토타입(Dynamic Prototypes)
+            * 셀 하나를 디자인해 이를 다른 셀의 템플릿으로 사용하는 방식
+            * 같은 레이아웃의 셀을 여러 개 이용해 정보를 표시할 경우
+            * 데이터 소스(UITableViewDataSource) 인스턴스에 의해 콘텐츠를 관리하며, 셀의 개수가 상황에 따라 변하는 경우에 사용
+        * 정적 셀(Static Cells)
+            * 고유의 레이아웃과 고정된 수의 행을 가지는 테이블뷰에 사용
+            * 테이블뷰를 디자인하는 시점에 테이블의 형태와 셀의 개수가 정해져 있는 경우 사용
+            * 셀의 개수가 변하지 않음
+    * _테이블 뷰 구성요소_
+        * 셀, 델리게이트, 데이터 소스
+    * _데이터 소스_
+        * 테이블뷰 데이터 소스 객체는 UITableViewDataSource 프로토콜을 채택
+        * 데이터 소스는 테이블 뷰를 생성하고 수정하는데 필요한 정보를 테이블뷰 객체에 제공
+        * 데이터 소스는 데이터 모델의 델리게이트로, 테이블뷰의 시각적 모양에 대한 최소한의 정보를 제공
+        * UITableView 객체에 섹션의 수와 행의 수를 알려주며, 행의 삽입, 삭제 및 재정렬하는 기능을 선택적으로 구현가능
+        * UITableViewDataSource 프로토콜의 주요 메서드는 아래와 같다.
+        ```
+        @required   :   필수적으로 구현되어야함
+        - func tableView(UITableView, cellForRowAt: IndexPath) : 특정 위치에 표시할 셀을 요청하는 메서드
+        - func tableView(UITableView, numberOfRowsInSection: Int) : 각 섹션에 표시할 행의 개수를 묻는 메서드
+        @optional
+        - func numberOfSections(in: UITableView) : 테이블뷰의 총 섹션 개수를 묻는 메서드
+        - func tableView(UITableView, titleForHeaderInSection: Int) : 특정 섹션의 헤더 타이틀을 묻는 메서드
+        - func tableView(UITableVIew, titleForFooterInSection: Int) : 특정 섹션의 푸터 타이틀을 묻는 메서드
+        - func tableView(UITableVIew, commit: UITableViewCellEditingStyle, forRowAt: IndexPath) : 특정 위치의 행을 추가 또는 삭제 요청 메서드
+        - func tableView(UITableView, canEditRowAt: IndexPath) : 특정 위치의 행이 편집 가능한 지 묻는 메서드
+        - func tableView(UITableView, canMoveRowAt: IndexPath) : 특정 위치의 행을 재정렬 할 수 있는지 묻는 메서드
+        - func tableVIew(UITableView, moveRowAt: IndexPath, to: IndexPath) : 특정 위치의 행을 다른 위치로 옮기는 메서드
+    * _델리게이트_
+        * 테이블뷰 델리게이트 객체는 UITableViewDelegate 프로토콜을 채택
+        * 델리게이트는 테이블뷰의 시각적인 부분 수정, 행의 선택 관리, 액세서리뷰 지원 그리고 테이블뷰의 개별 행 편집을 도와줌
+        * 델리게이트 메서드를 활용하면 테이블뷰의 세세한 부분을 조정할 수 있음
+        * UITableViewDelegate 프로토콜의 주요 메서드는 아래와 같다.
+        ```
+        - func tableView(UITableView, heightForRowAt: IndexPath) : 특정 위치 행의 높이를 묻는 메서드
+        - func tableView(UITableView, indentationLevelForRowAt: IndexPath) : 특정 위치 행의 들여쓰기 수준을 묻는 메서드
+        - func tableView(UITableView, didSelectRowAt: IndexPath) : 지정된 행이 선택되었음을 알리는 메서드
+        - func tableView(UITableVIew, didDeselectRowAt: IndexPath) : 지정된 행의 선택이 해제되었음을 알리는 메서드
+        - func tableView(UITableView, viewForHeaderInSection: Int) : 특정 섹션의 헤더뷰를 요청하는 메서드
+        - func tableView(UITableVIew, viewForFooterInSection: Int) : 특정 섹션의 푸터뷰를 요청하는 메서드
+        - func tableView(UITableView, heightForHeaderInSection: Int) : 특정 섹션의 헤더뷰의 높이를 묻는 메서드
+        - func tableView(UITableView, heightForFooterInSection: Int) : 특정 섹션의 푸터뷰의 높이를 묻는 메서드
+        - func tableView(UITableView, willBeginEditingRowAt: IndexPath) : 테이블뷰가 편집모드에 들어갔음을 알리는 메서드
+        - func tableView(UITableView, didEndEditingRowAt : IndexPath?) : 테이블뷰가 편집모드에서 빠져나왔음을 알리는 메서드
 - [ ] __2. 뷰의 재사용__
 - [ ] __3. 스토리보드 세그__
 - [ ]  __4. JSON 다루기__
