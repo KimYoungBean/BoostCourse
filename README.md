@@ -202,7 +202,70 @@
         - func tableView(UITableView, heightForFooterInSection: Int) : 특정 섹션의 푸터뷰의 높이를 묻는 메서드
         - func tableView(UITableView, willBeginEditingRowAt: IndexPath) : 테이블뷰가 편집모드에 들어갔음을 알리는 메서드
         - func tableView(UITableView, didEndEditingRowAt : IndexPath?) : 테이블뷰가 편집모드에서 빠져나왔음을 알리는 메서드
-- [ ] __2. 뷰의 재사용__
-- [ ] __3. 스토리보드 세그__
-- [ ]  __4. JSON 다루기__
-- [ ]  __5. Summary__
+- [x] __2. 뷰의 재사용__
+    * _재사용의 대표적인 예_
+        ```
+        - UITableViewCell: UITableView의 셀
+        - UICollectionViewCell : UICollectionView의 셀
+    * _재사용 원리_
+        ```
+        1. 테이블뷰 및 컬렉션뷰에서 셀을 표시하기 위해 데이터 소스에 뷰(셀) 인스턴스를 요청
+        2. 데이터 소스는 요청마다 새로운 셀을 만드는 대신 재사용 큐에 재사용을 위해 대기하고 있는 셀이 있는지 확인, 있으면 그 셀에 새로운 데이터를 설정, 없으면 새로운 셀을 생성
+        3. 테이블뷰 및 컬렉션뷰는 데이터 소스가 셀을 반환하면 화면에 표시
+        4. 사용자가 스크롤을 하게 되면 일부 셀들이 화면 밖으로 사라지면서 다시 재사용 큐에 들어감
+        5. 1~4번 과정이 반복
+- [x] __3. 스토리보드 세그__
+    * _세그란?_
+        ```
+        세그는 스토리보드에서 뷰 컨트롤러 사이의 화면전환을 위해 사용하는 객체이다. 별도의 코드 없이도 스토리보드에서 세그를 연결하여 뷰 컨트롤러 사이의 화면전환을 구현가능하다.
+    * _UIStoryboardSegue 클래스_
+        ```
+        UIStoryboardSegue 클래스는 UIKit에서 사용할 수 있는 표준 화면전환을 위한 프로퍼티와 메서드를 포함한다. 세그는 뷰 컨트롤러의 뷰를 다른 뷰 컨트롤러의 뷰로 전환할 때 뷰 컨트롤러의 prepare(for:sender:) 메서드를 사용하여 새로 보여지는 뷰 컨트롤러에 데이터를 전달할 수 있다. (prepare는 주석으로 생성된다)
+    * _주요 프로퍼티_
+        ```
+        var source: UIViewController : 세그에 전환을 요청하는 뷰 컨트롤러
+        var destination: UIViewController : 전환될 뷰 컨트롤러
+        var identifier: String? : 세그 객체의 식별자
+    * _주요 메서드_
+        ```
+        func perform() : 뷰 컨트롤러의 전환을 수행
+- [x]  __4. JSON 다루기__
+    * _Codable_
+        ```
+        typealias Codable = Decodable & Encodable
+    * _선언 예제_
+        - Coordinate 타입과 Landmark 타입의 인스턴스를 다른 데이터형식으로 변환하고 싶은 경우
+        ~~~
+        struct Coordinate: Codable {
+            var latitude: Double
+            var longitude: Double
+        }
+    
+        struct Landmark: Codable {
+            var name: String
+            var foundingYear: Int
+            var vantagePoints: [Coordinate]
+            var metadata: [String: String]
+            var website: URL?
+        }
+       ~~~
+       - CodingKey
+            ```
+            자주 사용하게 될 JSON형태의 데이터로 상호변환하고자 할 때는 기본적으로 JSON 타입의 키와 애플리케이션의 사용자 정의 프로퍼티가 일치해야한다. 만약 JSON의 키 이름을 구조체 프로퍼티의 이름과 다르게 표현하려면 타입 내부에 String 타입의 원시값을 갖는 CodingKeys라는 이름의 열거형을 선언하고 CodingKey 프로토콜을 준수하도록 하면 된다. CodingKeys 열거형 케이스의 이름은 해당 프로퍼티의 이름과 일치해야 한다. 그리고 프로퍼티의 열거형 케이스의 값으로 매칭할 JSON 타입의 키를 할당하면 된다. 만약, JSON 타입의 키와 프로퍼티 이름이 일치한다면 값을 할당하지 않아도 무방하다.
+        ~~~
+        struct Landmark: Codable {
+            var name: String
+            var foundingYear: Int
+            var location: Coordinate
+            var vantagePoints: [Coordinate]
+            
+            enum CodingKeys: String, CodingKey {
+                case name = "title"
+                case foundingYear = "founding_date"
+                
+                case location
+                case vantagePoints
+            }
+        }
+       ~~~
+- [x]  __5. Summary__
